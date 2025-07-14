@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UTM Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 600px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input[type="text"], select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 10px;
+      background: #e6ffe6;
+      border: 1px solid #b2ffb2;
+      border-radius: 5px;
+      word-break: break-word;
+      direction: ltr;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>UTM Generator</h1>
+
+    <label for="baseUrl">رابط الصفحة</label>
+    <input type="text" id="baseUrl" placeholder="https://example.com/page" />
+
+    <label for="source">المنصة (utm_source)</label>
+    <select id="source">
+      <option value="meta">Meta</option>
+      <option value="tiktok">TikTok</option>
+      <option value="snapchat">Snapchat</option>
+      <option value="google">Google Ads</option>
+    </select>
+
+    <label for="medium">نوع الإعلان (utm_medium)</label>
+    <select id="medium">
+      <option value="conversion">Conversion</option>
+      <option value="traffic">Traffic</option>
+      <option value="leads">Leads</option>
+      <option value="engagement">Engagement</option>
+      <option value="awareness">Awareness</option>
+      <option value="messages">Messages</option>
+    </select>
+
+    <label for="campaign">اسم الحملة (utm_campaign)</label>
+    <input type="text" id="campaign" placeholder="مثال: 1st-traffic" />
+
+    <label for="term">اسم الـ Ad Set (utm_term)</label>
+    <input type="text" id="term" placeholder="مثال: Saudi-t" />
+
+    <label for="content">اسم الإعلان (utm_content)</label>
+    <input type="text" id="content" placeholder="مثال: نظرة-1" />
+
+    <label for="country">الدولة (utm_country)</label>
+    <select id="country">
+      <option value="sa">Saudi Arabia</option>
+      <option value="ae">Emirates</option>
+      <option value="qa">Qatar</option>
+      <option value="bh">Bahrain</option>
+      <option value="kw">Kuwait</option>
+      <option value="eg">Egypt</option>
+    </select>
+
+    <button onclick="generateUTM()">Generate UTM</button>
+
+    <div id="result" style="display:none;">
+      <span id="linkText"></span>
+    </div>
+  </div>
+
+  <script>
+    function slugify(text) {
+      return text.trim().replace(/\s+/g, '-');
+    }
+
+    function generateUTM() {
+      const baseUrl = document.getElementById("baseUrl").value.trim();
+      const source = slugify(document.getElementById("source").value);
+      const medium = slugify(document.getElementById("medium").value);
+      const campaign = slugify(document.getElementById("campaign").value);
+      const term = slugify(document.getElementById("term").value);
+      const content = slugify(document.getElementById("content").value);
+      const country = document.getElementById("country").value;
+
+      if (!baseUrl || !source || !medium || !campaign || !term || !content || !country) {
+        alert("من فضلك املأ جميع الخانات.");
+        return;
+      }
+
+      const utmLink = `${baseUrl}?utm_source=${source}&utm_medium=${medium}&utm_campaign=${campaign}&utm_term=${term}&utm_content=${content}&utm_country=${country}`;
+
+      document.getElementById("linkText").innerText = utmLink;
+      document.getElementById("result").style.display = 'block';
+    }
+  </script>
+</body>
+</html>
