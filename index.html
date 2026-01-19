@@ -1,139 +1,844 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ar" dir="rtl">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UTM Generator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      padding: 30px;
-      display: flex;
-      justify-content: center;
-    }
-    .container {
-      width: 100%;
-      max-width: 600px;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-    }
-    input[type="text"], select {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    #result {
-      margin-top: 20px;
-      padding: 10px;
-      background: #e6ffe6;
-      border: 1px solid #b2ffb2;
-      border-radius: 5px;
-      word-break: break-word;
-      direction: ltr;
-    }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>UTM Generator</title>
+    <style>
+        :root {
+            --bg: #0b1220;
+            --card: #0f1a33;
+            --card2: #0c162c;
+            --text: #eef3ff;
+            --muted: #a9b4d0;
+            --line: rgba(255, 255, 255, .10);
+            --primary: #2d6bff;
+            --primary2: #1f5bff;
+            --danger: #ff3b3b;
+            --ok: #16a34a;
+            --shadow: 0 16px 40px rgba(0, 0, 0, .35);
+            --radius: 18px;
+            --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Tahoma, Arial, "Noto Sans Arabic", "Cairo", "Tajawal", sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--font);
+            color: var(--text);
+            background:
+                radial-gradient(1200px 600px at 15% 10%, rgba(45, 107, 255, .25), transparent 55%),
+                radial-gradient(900px 500px at 85% 20%, rgba(22, 163, 74, .18), transparent 55%),
+                radial-gradient(900px 500px at 50% 95%, rgba(255, 59, 59, .12), transparent 60%),
+                var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 28px 14px;
+        }
+
+        .wrap {
+            width: min(980px, 100%);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .title {
+            font-size: 42px;
+            letter-spacing: .3px;
+            margin: 0 0 6px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, .02));
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-inner {
+            padding: 18px;
+            background: linear-gradient(180deg, rgba(15, 26, 51, .9), rgba(12, 22, 44, .92));
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        @media (max-width: 860px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .title {
+                font-size: 34px;
+            }
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 14px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .req,
+        .opt {
+            font-size: 12px;
+            color: var(--muted);
+            opacity: .95;
+            white-space: nowrap;
+        }
+
+        .req b {
+            color: #ffd166;
+            font-weight: 700;
+        }
+
+        .opt b {
+            color: #9ad0ff;
+            font-weight: 700;
+        }
+
+        .control {
+            position: relative;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid var(--line);
+            background: rgba(0, 0, 0, .18);
+            color: var(--text);
+            padding: 12px 12px;
+            border-radius: 14px;
+            outline: none;
+            transition: .15s ease;
+            font-size: 14px;
+        }
+
+        input::placeholder {
+            color: rgba(238, 243, 255, .45);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: rgba(45, 107, 255, .65);
+            box-shadow: 0 0 0 4px rgba(45, 107, 255, .18);
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+        }
+
+        .btn {
+            border: 0;
+            cursor: pointer;
+            border-radius: 14px;
+            padding: 12px 14px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: .15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(180deg, var(--primary), var(--primary2));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.06);
+            transform: translateY(-1px);
+        }
+
+        .btn-ghost {
+            background: rgba(255, 255, 255, .06);
+            color: var(--text);
+            border: 1px solid var(--line);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, .09);
+        }
+
+        .btn-danger {
+            background: rgba(255, 59, 59, .14);
+            border: 1px solid rgba(255, 59, 59, .35);
+            color: #ffd2d2;
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 59, 59, .18);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .result {
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            background: rgba(0, 0, 0, .16);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .result-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .result-title {
+            font-weight: 800;
+            margin: 0;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .result-url {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            word-break: break-all;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, .10);
+            background: rgba(0, 0, 0, .18);
+        }
+
+        .note {
+            margin-top: 10px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        /* Projects chips */
+        .chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .chip {
+            border: 1px solid rgba(255, 255, 255, .12);
+            background: rgba(255, 255, 255, .06);
+            color: var(--text);
+            padding: 8px 10px;
+            border-radius: 999px;
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: .12s ease;
+            font-size: 13px;
+        }
+
+        .chip:hover {
+            background: rgba(255, 255, 255, .09);
+        }
+
+        .chip .x {
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: rgba(255, 59, 59, .18);
+            border: 1px solid rgba(255, 59, 59, .35);
+            color: #ffd2d2;
+            font-weight: 900;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .chip .x:hover {
+            filter: brightness(1.1);
+        }
+
+        .status {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .35);
+        }
+
+        .dot.ok {
+            background: rgba(22, 163, 74, .75);
+        }
+
+        .dot.bad {
+            background: rgba(255, 59, 59, .75);
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--line);
+            margin: 14px 0;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>UTM Generator</h1>
+    <div class="wrap">
+        <div class="header">
+            <h1 class="title">Majarrat UTM Generator</h1>
+            <p class="subtitle">توليد روابط تتبع الحملات لمتاجر مجرات بسهولة</p>
+        </div>
 
-    <label for="baseUrl">رابط الصفحة</label>
-    <input type="text" id="baseUrl" placeholder="https://example.com/page" />
+        <div class="card">
+            <div class="card-inner">
+                <div class="grid">
+                    <!-- Base URL -->
+                    <div class="field" style="grid-column:1/-1;">
+                        <label>
+                            <span>رابط الصفحة</span>
+                            <span class="req">(يجب إدخالها)</span>
+                        </label>
+                        <div class="control">
+                            <input id="baseUrl" type="url" placeholder="https://example.com/page" autocomplete="off" />
+                        </div>
+                    </div>
 
-    <label for="source">المنصة (utm_source)</label>
-    <select id="source">
-      <option value="meta">Meta</option>
-      <option value="tiktok">TikTok</option>
-      <option value="snapchat">Snapchat</option>
-      <option value="google">Google Ads</option>
-    </select>
+                    <!-- Store (required) -->
+                    <div class="field">
+                        <label>
+                            <span>اسم المتجر (utm_store)</span>
+                            <span class="req">(يجب إدخالها)</span>
+                        </label>
+                        <div class="control">
+                            <select id="utmStore">
+                                <option value="" disabled selected>اختر المتجر</option>
+                                <option value="khorma">البر بالخرمة</option>
+                                <option value="karama">كرامة</option>
+                                <option value="taef">البر بالطائف</option>
+                                <option value="shaer">شعر</option>
+                                <option value="aloun">العون</option>
+                                <option value="moeen">معين</option>
+                            </select>
+                        </div>
+                    </div>
 
-    <label for="medium">نوع الإعلان (utm_medium)</label>
-    <select id="medium">
-      <option value="conversion">Conversion</option>
-      <option value="traffic">Traffic</option>
-      <option value="leads">Leads</option>
-      <option value="engagement">Engagement</option>
-      <option value="awareness">Awareness</option>
-      <option value="messages">Messages</option>
-    </select>
 
-    <label for="campaign">اسم الحملة (utm_campaign)</label>
-    <input type="text" id="campaign" placeholder="مثال: 1st-traffic" />
+                    <!-- Platform -->
+                    <div class="field">
+                        <label>
+                            <span>المنصة (utm_source)</span>
+                            <span class="req">(يجب إدخالها)</span>
+                        </label>
+                        <div class="control">
+                            <select id="utmSource">
+                                <option value="" disabled selected>اختر المنصة</option>
+                                <option value="meta">Meta</option>
+                                <option value="tiktok">TikTok</option>
+                                <option value="google_ads">Google Ads</option>
+                                <option value="snapchat">Snapchat</option>
+                            </select>
+                        </div>
+                    </div>
 
-    <label for="term">اسم الـ Ad Set (utm_term)</label>
-    <input type="text" id="term" placeholder="مثال: Saudi-t" />
+                    <!-- Ad Type -->
+                    <div class="field">
+                        <label>
+                            <span>نوع الإعلان (utm_medium)</span>
+                            <span class="req">(يجب إدخالها)</span>
+                        </label>
+                        <div class="control">
+                            <select id="utmMedium">
+                                <option value="conversion" selected>Conversion</option>
+                                <option value="awareness">Awareness</option>
+                                <option value="traffic">Traffic</option>
+                                <option value="engagement">Engagement</option>
+                                <option value="leads">Leads</option>
+                                <option value="sales">Sales</option>
+                                <option value="app">App</option>
+                                <option value="remarketing">Remarketing</option>
+                            </select>
+                        </div>
+                    </div>
 
-    <label for="content">اسم الإعلان (utm_content)</label>
-    <input type="text" id="content" placeholder="مثال: نظرة-1" />
+                    <!-- Campaign -->
+                    <div class="field">
+                        <label>
+                            <span>اسم الحملة (utm_campaign)</span>
+                            <span class="req">(يجب إدخالها)</span>
+                        </label>
+                        <div class="control">
+                            <input id="utmCampaign" type="text" placeholder="مثال: jan-traffic-01" autocomplete="off" />
+                        </div>
+                    </div>
 
-    <label for="country">الدولة (utm_country)</label>
-    <select id="country">
-      <option value="GCC">GCC</option>
-      <option value="sa">Saudi Arabia</option>
-      <option value="ae">Emirates</option>
-      <option value="qa">Qatar</option>
-      <option value="bh">Bahrain</option>
-      <option value="kw">Kuwait</option>
-      <option value="eg">Egypt</option>
-    </select>
+                    <!-- Adset (optional) -->
+                    <div class="field">
+                        <label>
+                            <span>اسم الـ Ad Set (utm_term)</span>
+                            <span class="opt">(اختياري)</span>
+                        </label>
+                        <div class="control">
+                            <input id="utmTerm" type="text" placeholder="مثال: saudi-retargeting" autocomplete="off" />
+                        </div>
+                    </div>
 
-    <button onclick="generateUTM()">Generate UTM</button>
+                    <!-- Ad name (optional) -->
+                    <div class="field">
+                        <label>
+                            <span>اسم الإعلان (utm_content)</span>
+                            <span class="opt">(اختياري)</span>
+                        </label>
+                        <div class="control">
+                            <input id="utmContent" type="text" placeholder="مثال: creative-01" autocomplete="off" />
+                        </div>
+                    </div>
 
-    <div id="result" style="display:none;">
-      <span id="linkText"></span>
+                    <!-- Project (with +) -->
+                    <div class="field">
+                        <label>
+                            <span>اسم المشروع (utm_project)</span>
+                            <span class="opt">(اختياري)</span>
+                        </label>
+
+                        <div class="row">
+                            <div class="control" style="flex:1;">
+                                <input id="utmProject" type="text"
+                                    placeholder="مثال: إفطار كبار السن / الصدقات / إفطار زاد (حسب ما يتناسب مع كل جمعية)..."
+                                    autocomplete="off" />
+                            </div>
+                            <button id="addProjectBtn" class="btn btn-ghost" type="button"
+                                title="إضافة المشروع للقائمة">
+                                <span style="font-size:18px; line-height:1;">+</span>
+                                إضافة
+                            </button>
+                        </div>
+
+                        <div class="status" id="syncStatus">
+                            <span class="dot" id="syncDot"></span>
+                            <span id="syncText">جاهز</span>
+                        </div>
+
+                        <div class="chips" id="projectsChips" aria-label="Projects options"></div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="actions">
+                    <button id="generateBtn" class="btn btn-primary" type="button">Generate UTM</button>
+                    <button id="copyBtn" class="btn btn-ghost" type="button" disabled>Copy</button>
+                    <button id="resetBtn" class="btn btn-danger" type="button">Reset</button>
+                </div>
+
+                <div class="result" id="resultBox" style="display:none;">
+                    <div class="result-head">
+                        <p class="result-title">الرابط النهائي</p>
+                    </div>
+                    <div class="result-url" id="resultUrl"></div>
+                </div>
+
+                <div class="note">
+                    ⚙️ بعد توليد الرابط اضغط على <b>Copy</b> لنسخ الرابط بسهولة.
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    function slugify(text) {
-      return text.trim().replace(/\s+/g, '-');
-    }
+    <script>
+        // =========================
+        // CONFIG
+        // =========================
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx76xIrsRmB9h5nwyIsSlqZPQyiQz7kL5XTZJE7bPGspLFJEbKb5NXv5g2MOdhmyrTO/exec";
 
-    function generateUTM() {
-      const baseUrl = document.getElementById("baseUrl").value.trim();
-      const source = slugify(document.getElementById("source").value);
-      const medium = slugify(document.getElementById("medium").value);
-      const campaign = slugify(document.getElementById("campaign").value);
-      const term = slugify(document.getElementById("term").value);
-      const content = slugify(document.getElementById("content").value);
-      const country = document.getElementById("country").value;
+        // =========================
+        // Helpers
+        // =========================
+        const $ = (id) => document.getElementById(id);
 
-      if (!baseUrl || !source || !medium || !campaign || !term || !content || !country) {
-        alert("من فضلك املأ جميع الخانات.");
-        return;
-      }
+        function setSyncState(state, text) {
+            const dot = $("syncDot");
+            dot.classList.remove("ok", "bad");
+            if (state === "ok") dot.classList.add("ok");
+            if (state === "bad") dot.classList.add("bad");
+            $("syncText").textContent = text || "جاهز";
+        }
 
-      const utmLink = `${baseUrl}?utm_source=${source}&utm_medium=${medium}&utm_campaign=${campaign}&utm_term=${term}&utm_content=${content}&utm_country=${country}`;
+        function normalizeProjectName(name) {
+            return (name || "").trim().replace(/\s+/g, " ");
+        }
 
-      document.getElementById("linkText").innerText = utmLink;
-      document.getElementById("result").style.display = 'block';
-    }
-  </script>
+        function safeEncode(val) {
+            // نحافظ على العربية + المسافات تتحول لـ %20
+            return encodeURIComponent(val);
+        }
+
+        // =========================
+        // Projects State
+        // =========================
+        let projects = []; // list of strings unique
+
+        function renderProjects() {
+            const box = $("projectsChips");
+            box.innerHTML = "";
+
+            if (projects.length === 0) {
+                // nothing
+                return;
+            }
+
+            projects.forEach((p) => {
+                const chip = document.createElement("div");
+                chip.className = "chip";
+                chip.setAttribute("data-name", p);
+                chip.innerHTML = `
+          <span class="name">${p}</span>
+          <span class="x" title="حذف">×</span>
+        `;
+
+                // click on name -> fill
+                chip.addEventListener("click", (e) => {
+                    const isX = e.target && e.target.classList.contains("x");
+                    if (isX) return; // handled below
+                    $("utmProject").value = p;
+                });
+
+                // click X -> remove
+                chip.querySelector(".x").addEventListener("click", async (e) => {
+                    e.stopPropagation();
+                    await removeProject(p);
+                });
+
+                box.appendChild(chip);
+            });
+        }
+
+        function addProjectLocal(name) {
+            const n = normalizeProjectName(name);
+            if (!n) return { ok: false, reason: "empty" };
+            if (projects.some(x => x.toLowerCase() === n.toLowerCase())) {
+                return { ok: false, reason: "exists" };
+            }
+            projects.unshift(n);
+            return { ok: true, value: n };
+        }
+
+        function removeProjectLocal(name) {
+            const n = normalizeProjectName(name);
+            const before = projects.length;
+            projects = projects.filter(x => x.toLowerCase() !== n.toLowerCase());
+            return before !== projects.length;
+        }
+
+        // =========================
+        // GAS Sync
+        // =========================
+        function gasCall(payload, timeoutMs = 15000) {
+            return new Promise((resolve, reject) => {
+                if (!GAS_WEB_APP_URL) return reject(new Error("GAS URL missing"));
+
+                const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+                const script = document.createElement("script");
+
+                const url = new URL(GAS_WEB_APP_URL);
+                Object.keys(payload || {}).forEach(k => url.searchParams.set(k, payload[k]));
+                url.searchParams.set("callback", cb);
+
+                console.log("[GAS JSONP] src =", url.toString());
+
+                let done = false;
+
+                const timer = setTimeout(() => {
+                    if (done) return;
+                    done = true;
+                    cleanup();
+                    reject(new Error("TIMEOUT: script loaded? callback not called"));
+                }, timeoutMs);
+
+                function cleanup() {
+                    clearTimeout(timer);
+                    try { delete window[cb]; } catch { }
+                    try { script.remove(); } catch { }
+                    window.removeEventListener("error", onWinErr, true);
+                }
+
+                // يلقط SyntaxError زي: Unexpected token '<' لو الرد HTML
+                function onWinErr(ev) {
+                    if (!ev || !ev.filename) return;
+                    if (ev.filename === script.src) {
+                        if (done) return;
+                        done = true;
+                        cleanup();
+                        reject(new Error("SCRIPT_RUNTIME_ERROR: " + (ev.message || "Unknown script error")));
+                    }
+                }
+                window.addEventListener("error", onWinErr, true);
+
+                window[cb] = (data) => {
+                    if (done) return;
+                    done = true;
+                    cleanup();
+                    resolve(data);
+                };
+
+                script.onload = () => {
+                    console.log("[GAS JSONP] script.onload fired");
+                    // لو وصل هنا ومفيش callback هيمسكها الـ TIMEOUT بعد شوية
+                };
+
+                script.onerror = () => {
+                    if (done) return;
+                    done = true;
+                    cleanup();
+                    reject(new Error("SCRIPT_ONERROR: blocked / network / CSP"));
+                };
+
+                script.src = url.toString();
+                document.body.appendChild(script);
+            });
+        }
+
+
+
+        async function syncAddProject(name) {
+            setSyncState("", "جاري حفظ المشروع في قاعدة البيانات...");
+            try {
+                const data = await gasCall({ action: "add", project: name });
+                setSyncState("ok", data && data.ok ? "تم الحفظ في قاعدة البيانات" : "تم (رد غير متوقع)");
+            } catch (err) {
+                console.error("loadProjectsFromSheet error:", err);
+                setSyncState("bad", "فشل تحميل المشاريع: " + (err && err.message ? err.message : String(err)));
+            }
+        }
+
+        async function syncRemoveProject(name) {
+            setSyncState("", "جاري حذف المشروع من قاعدة البيانات...");
+            try {
+                const data = await gasCall({ action: "remove", project: name });
+                setSyncState("ok", data && data.ok ? "تم الحذف من قاعدة البيانات" : "تم (رد غير متوقع)");
+            } catch (err) {
+                setSyncState("bad", "فشل حذف المشروع (تحقق من GAS)");
+            }
+        }
+
+        async function loadProjectsFromSheet() {
+            if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL.includes("PUT_YOUR_GAS_WEB_APP_URL_HERE")) {
+                return;
+            }
+            setSyncState("", "جاري تحميل المشاريع من قاعدة البيانات...");
+            try {
+                // نستخدم POST عشان نتجنب CORS/redirect issues مع GET في بعض الحالات
+                const data = await gasCall({ action: "list" });
+                if (data && data.ok && Array.isArray(data.projects)) {
+                    projects = data.projects.map(normalizeProjectName).filter(Boolean);
+                    // unique (case-insensitive)
+                    const seen = new Set();
+                    projects = projects.filter(p => {
+                        const k = p.toLowerCase();
+                        if (seen.has(k)) return false;
+                        seen.add(k);
+                        return true;
+                    });
+                    renderProjects();
+                    setSyncState("ok", "تم تحميل المشاريع");
+                } else {
+                    setSyncState("bad", "فشل تحميل المشاريع (رد غير متوقع)");
+                }
+            } catch (err) {
+                setSyncState("bad", "فشل تحميل المشاريع (تحقق من GAS)");
+            }
+        }
+
+        // =========================
+        // Project actions
+        // =========================
+        async function addProject() {
+            const name = $("utmProject").value;
+            const r = addProjectLocal(name);
+            if (!r.ok) {
+                if (r.reason === "exists") setSyncState("bad", "المشروع موجود بالفعل");
+                return;
+            }
+            renderProjects();
+            await syncAddProject(r.value);
+        }
+
+        async function removeProject(name) {
+            const removed = removeProjectLocal(name);
+            if (!removed) return;
+            renderProjects();
+            await syncRemoveProject(name);
+        }
+
+        // =========================
+        // UTM Generate
+        // =========================
+        function validateRequired() {
+            const baseUrl = $("baseUrl").value.trim();
+            const store = $("utmStore").value.trim();
+            const source = $("utmSource").value.trim();
+            const medium = $("utmMedium").value.trim();
+            const campaign = $("utmCampaign").value.trim();
+
+            const missing = [];
+            if (!baseUrl) missing.push("رابط الصفحة");
+            if (!store) missing.push("اسم المتجر");
+            if (!source) missing.push("المنصة");
+            if (!medium) missing.push("نوع الإعلان");
+            if (!campaign) missing.push("اسم الحملة");
+
+            if (missing.length) {
+                alert("من فضلك أدخل الحقول الإلزامية:\n- " + missing.join("\n- "));
+                return null;
+            }
+
+            try { new URL(baseUrl); }
+            catch { alert("رابط الصفحة غير صحيح."); return null; }
+
+            return { baseUrl, store, source, medium, campaign };
+        }
+
+
+        function buildFinalUrl() {
+            const req = validateRequired();
+            if (!req) return;
+
+            const term = $("utmTerm").value.trim();
+            const content = $("utmContent").value.trim();
+            const project = $("utmProject").value.trim();
+
+            // نرتّب البراميترز بالترتيب اللي انت محدده
+            const params = [];
+            params.push(["utm_store", req.store]);
+            params.push(["utm_source", req.source]);
+            params.push(["utm_medium", req.medium]);
+            params.push(["utm_campaign", req.campaign]);
+
+            if (term) params.push(["utm_term", term]);
+            if (content) params.push(["utm_content", content]);
+            if (project) params.push(["utm_project", project]);
+
+            const urlObj = new URL(req.baseUrl);
+            // امسح utm قديمة لو موجودة
+            ["utm_store", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_project"].forEach(k => urlObj.searchParams.delete(k));
+
+            // لو الرابط فيه params تانية نخليها، ونضيف UTM في الآخر
+            // (URLSearchParams يحافظ على الترتيب حسب الإضافة)
+            params.forEach(([k, v]) => urlObj.searchParams.append(k, v));
+
+            const finalUrl = urlObj.toString();
+
+            $("resultUrl").textContent = finalUrl;
+            $("resultBox").style.display = "flex";
+            $("copyBtn").disabled = false;
+
+            return finalUrl;
+        }
+
+        async function copyResult() {
+            const txt = $("resultUrl").textContent.trim();
+            if (!txt) return;
+            try {
+                await navigator.clipboard.writeText(txt);
+                setSyncState("ok", "تم نسخ الرابط");
+            } catch {
+                // fallback
+                const ta = document.createElement("textarea");
+                ta.value = txt;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand("copy");
+                ta.remove();
+                setSyncState("ok", "تم نسخ الرابط");
+            }
+        }
+
+        function resetAll() {
+            $("baseUrl").value = "";
+            $("utmSource").value = "";
+            $("utmMedium").value = "conversion";
+            $("utmCampaign").value = "";
+            $("utmTerm").value = "";
+            $("utmContent").value = "";
+            $("utmProject").value = "";
+            $("resultBox").style.display = "none";
+            $("resultUrl").textContent = "";
+            $("copyBtn").disabled = true;
+            setSyncState("", "جاهز");
+        }
+
+        // =========================
+        // Events
+        // =========================
+        $("addProjectBtn").addEventListener("click", addProject);
+        $("utmProject").addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                addProject();
+            }
+        });
+
+        $("generateBtn").addEventListener("click", buildFinalUrl);
+        $("copyBtn").addEventListener("click", copyResult);
+        $("resetBtn").addEventListener("click", resetAll);
+
+        // Load projects from sheet on start (if GAS configured)
+        loadProjectsFromSheet();
+    </script>
 </body>
+
 </html>
